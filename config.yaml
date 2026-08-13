@@ -1,3 +1,12 @@
+version: 1
+
+defaults:
+  publish:
+    on_change_only: true
+    min_interval: 10s
+
+devices:
+
 - id: "obd_link_cx"
   name: "OBDlink CX"
   source: "obd"
