@@ -10,9 +10,11 @@ devices:
     name: "OBDlink CX"
     source: "obd"
     obd:
-      tx_delay: 50ms
-      init_commands:
-        - "ATSP6"
+        service_uuid: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2"
+        tx_char_uuid: "E7810A72-73AE-499D-8C15-FAA9AEF0C3F2"
+        rx_char_uuid: "E7810A73-73AE-499D-8C15-FAA9AEF0C3F2"
+        tx_delay: 50ms
+        init_commands: ["ATSP6"]
 sensors:
         - key: "speed"
           device_class: "speed"
