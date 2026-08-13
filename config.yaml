@@ -8,11 +8,8 @@ defaults:
 devices:
   - id: "obd_link_cx"
     name: "OBDlink CX"
-    source: obd
-    obd:
-      tx_delay: 50ms
-      init_commands:
-        - "ATSP6"      # CAN bus 500kbps (11-bit ID)
+    source: "obd"
+    obd: {}
 sensors:
   - key: "speed"
       device_class: "speed"
