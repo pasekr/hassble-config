@@ -2,19 +2,14 @@
 # Loaded from repo root as templates.yaml (same branch as config.yaml)
 
 templates:
-  - id: obd_vw_id4
-    name: "VW ID.4 (OBDLink CX)"
+  - id: obd_link_cx
+    name: "OBDlink CX"
     description: "SoC, napětí, proud a teploty HV baterie MEB platformy (ECU 7E4)"
     device:
-      id: vw_id4_obd
-      name: "VW ID.4 OBD"
-      source: obd
-      obd:
-        service_uuid: "18F0"
-        tx_char_uuid: "2AF1"
-        rx_char_uuid: "2AF0"
-        tx_delay: 50ms
-        init_commands: ["ATSP6"]
+      id: "obd_link_cx"
+      name: "OBDlink CX"
+      source: "obd"
+      obd: {}
       sensors:
         # ── Rychlost (Standardní OBD2) ──
         - { key: speed, preset: speed, update_interval: 1s }
