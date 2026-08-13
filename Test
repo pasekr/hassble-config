@@ -1,1 +1,137 @@
-
+devices:
+- id: "obd_link_cx"
+  name: "OBDlink CX"
+  source: "obd"
+  obd: {}
+  sensors:
+  - key: "odometer"
+    device_class: "distance"
+    unit: "km"
+    state_class: "total_increasing"
+    accuracy_decimals: 1
+    preset: "odometer"
+    pid: "A6"
+    formula: "(a*16777216+b*65536+c*256+d)/10"
+    update_interval: "30s"
+  - key: "speed"
+    device_class: "speed"
+    unit: "km/h"
+    state_class: "measurement"
+    icon: "mdi:speedometer"
+    accuracy_decimals: 0
+    preset: "speed"
+    pid: "0D"
+    formula: "a"
+    update_interval: "1s"
+- id: "vw_id4_obd"
+  name: "VW ID.4 OBD"
+  source: "obd"
+  obd:
+    service_uuid: "18F0"
+    tx_char_uuid: "2AF1"
+    rx_char_uuid: "2AF0"
+    init_commands:
+    - "ATSP6"
+  sensors:
+  - key: "speed"
+    device_class: "speed"
+    unit: "km/h"
+    state_class: "measurement"
+    icon: "mdi:speedometer"
+    accuracy_decimals: 0
+    preset: "speed"
+    pid: "0D"
+    formula: "a"
+    update_interval: "1s"
+  - key: "battery_soc_real"
+    device_class: "battery"
+    unit: "%"
+    state_class: "measurement"
+    icon: "mdi:battery-charging-100"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "028C"
+    formula: "a*0.39215686"
+    update_interval: "10s"
+    pre_commands:
+    - "ATSH7E4"
+  - key: "battery_soc_display"
+    device_class: "battery"
+    unit: "%"
+    state_class: "measurement"
+    icon: "mdi:gauge"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "1002"
+    formula: "a*0.5"
+    update_interval: "10s"
+    pre_commands:
+    - "ATSH7E4"
+  - key: "hv_battery_voltage"
+    device_class: "voltage"
+    unit: "V"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "1E3B"
+    formula: "(a*256+b)*0.25"
+    update_interval: "5s"
+    pre_commands:
+    - "ATSH7E4"
+  - key: "hv_battery_current"
+    device_class: "current"
+    unit: "A"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "1E3D"
+    formula: "((a*256+b)-15000)*0.1"
+    update_interval: "2s"
+    pre_commands:
+    - "ATSH7E4"
+  - key: "battery_temp_min"
+    device_class: "temperature"
+    unit: "°C"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "1E0E"
+    formula: "a-40"
+    update_interval: "30s"
+    pre_commands:
+    - "ATSH7E4"
+  - key: "battery_temp_max"
+    device_class: "temperature"
+    unit: "°C"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    mode: "22"
+    pid: "1E0F"
+    formula: "a-40"
+    update_interval: "30s"
+    pre_commands:
+    - "ATSH7E4"
+- id: "obd_vehicle"
+  name: "obd_vehicle"
+  source: "obd"
+  obd: {}
+  sensors:
+  - key: "odometer"
+    device_class: "distance"
+    unit: "km"
+    state_class: "total_increasing"
+    accuracy_decimals: 1
+    preset: "odometer"
+    pid: "A6"
+    formula: "(a*16777216+b*65536+c*256+d)/10"
+    update_interval: "30s"
+  - key: "speed"
+    device_class: "speed"
+    unit: "km/h"
+    state_class: "measurement"
+    icon: "mdi:speedometer"
+    accuracy_decimals: 0
+    preset: "speed"
+    pid: "0D"
+    formula: "a"
+    update_interval: "1s"
