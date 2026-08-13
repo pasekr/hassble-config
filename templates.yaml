@@ -87,3 +87,113 @@ templates:
           state_class: measurement
           accuracy_decimals: 1
           update_interval: 30s
+
+  - id: obd_vw_id4_wican
+    name: "VW ID.4 (WiCAN Adapter)"
+    description: "SoC, napětí, proud a teploty HV baterie přes WiCAN adaptér (UDS 7E4 + Flow Control)"
+    device:
+      id: vw_id4_wican
+      name: "VW ID.4 WiCAN"
+      source: obd
+      obd:
+        service_uuid: "18F0"
+        tx_char_uuid: "2AF1"
+        rx_char_uuid: "2AF0"
+        tx_delay: 50ms
+        init_commands: ["ATSP6"]
+      sensors:
+        # ── Rychlost (Standardní OBD2) ──
+        - { key: speed, preset: speed, update_interval: 1s }
+
+        # ── HV Baterie (UDS Mode 22 na ECU 7E4 s WiCAN Flow Control) ──
+        - key: battery_soc_real
+          mode: "22"
+          pid: "028C"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "a*0.39215686"
+          unit: "%"
+          device_class: battery
+          state_class: measurement
+          accuracy_decimals: 1
+          icon: mdi:battery-charging-100
+          update_interval: 10s
+
+        - key: battery_soc_display
+          mode: "22"
+          pid: "1002"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "a*0.5"
+          unit: "%"
+          device_class: battery
+          state_class: measurement
+          accuracy_decimals: 1
+          icon: mdi:gauge
+          update_interval: 10s
+
+        - key: hv_battery_voltage
+          mode: "22"
+          pid: "1E3B"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "(a*256+b)*0.25"
+          unit: "V"
+          device_class: voltage
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 5s
+
+        - key: hv_battery_current
+          mode: "22"
+          pid: "1E3D"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "((a*256+b)-15000)*0.1"
+          unit: "A"
+          device_class: current
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 2s
+
+        - key: battery_temp_min
+          mode: "22"
+          pid: "1E0E"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "a-40"
+          unit: "°C"
+          device_class: temperature
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 30s
+
+        - key: battery_temp_max
+          mode: "22"
+          pid: "1E0F"
+          pre_commands:
+            - "ATSH7E4"
+            - "ATFCSH7E4"
+            - "ATFCSD300000"
+            - "ATFCSM1"
+          formula: "a-40"
+          unit: "°C"
+          device_class: temperature
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 30s
