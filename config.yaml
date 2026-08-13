@@ -15,6 +15,15 @@ devices:
         - "ATSP6"              # Vynutí ISO 15765-4 CAN (11 bit ID, 500 kbaud)
         - "ATCRA 7E8"          # Přijímat odpovědi z ECU baterie/pohonu
       sensors:
+        # ── Standardní rychlost (Funguje vám, necháme tak) ──
+        - key: speed
+          preset: speed
+          update_interval: 1s
+          device_class: speed
+          unit: km/h
+          state_class: measurement
+          icon: mdi:speedometer
+          accuracy_decimals: 0
         # ── HV Baterie (UDS Mode 22 @ ECU 7E4) ──
         - key: battery_soc_real
           mode: "22"
