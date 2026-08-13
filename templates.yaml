@@ -1,6 +1,3 @@
-# Device templates for HassBle app → Sensors tab → Import template
-# Loaded from repo root as templates.yaml (same branch as config.yaml)
-
 templates:
   - id: jaalee_jht
     name: "Jaalee JHT"
@@ -124,24 +121,9 @@ templates:
         rx_char_uuid: "2AF0"
         tx_delay: 50ms
         init_commands: ["ATSP6"]
-        # default_commands 생략 — 아래 ATSH7C6 센서가 있으므로 앱이 ATSH7DF로 자동 복원
       sensors:
         - { key: rpm, preset: rpm, update_interval: 1s }
         - { key: speed, preset: speed, update_interval: 1s }
-        # 계기판(CLU) UDS. 요청 7C6 → 응답 7CE. 한 응답에 주행거리·연료·전압이 함께 온다.
-        # 응답: 62 B0 02 [a][b][c][d][e][f][g][h][i][j][k][l]…
-        #       (a = 62B002 에코 바로 다음 바이트)
-        #   e      → 연료잔량    e*0.5 L
-        #   f      → 계기판 전압  f/12.8 = f*0.078125 V
-        #   g:h:i  → 총 주행거리  24bit km
-        #   j:k:l  → 위와 같은 주행거리의 mile 값 (북미 사양 계기판)
-        # 출처: OBDb(obdb.community)에서 현대·기아 11개 차종이 동일한 바이트 배치로 확인.
-        # awesomeit Torque 플러그인(35개 차종)·Elantra CN7 PID 목록과도 일치.
-        # 2013년식 이후에서 널리 동작하며, 미지원 차는 NO DATA를 반환한다.
-        #
-        # 예외: 엑센트(RB)는 계기판이 이 DID를 열지 않는다. 2013/2015/2019 실차 캡처에서
-        # unsupported로 확인됐고 (2018년식만 예외), 요청하면 7F 22 22를 돌려준다.
-        # 엑센트는 아래 obd_hyundai_accent_rb_diesel 템플릿을 쓸 것.
         - key: odometer
           mode: "22"
           pid: "B002"
@@ -189,14 +171,9 @@ templates:
         rx_char_uuid: "2AF0"
         tx_delay: 50ms
         init_commands: ["ATSP6"]
-        # 아래 ATSH7E0 센서가 있으므로 표준 센서 앞에 ATSH7DF가 자동 삽입된다
       sensors:
         - { key: rpm, preset: rpm, update_interval: 1s }
         - { key: speed, preset: speed, update_interval: 1s }
-        # 연료량은 이 차에서 읽을 방법이 없다. 표준 01 2F는 실차에서 NO DATA를
-        # 돌려주고(OBDb 캡처는 북미 가솔린 기준이라 디젤에는 맞지 않았다),
-        # 계기판 22B002도 7F 22 22로 거부한다.
-        # awesomeit 엑센트RB 2013 D 1.6 TCI-U2 프로필에서 확인된 값들
         - key: intake_temp
           mode: "21"
           pid: "01"
@@ -217,33 +194,6 @@ templates:
           state_class: measurement
           accuracy_decimals: 1
           update_interval: 60s
-        # ── 총주행거리 (엔진 ECU의 DPF 블록에 같이 실려 온다) ──────────────
-        # 엑센트 RB는 계기판(7C6 / 22B002)이 주행거리를 직접 내주지 않는다 —
-        # 요청하면 7F 22 22. 그래서 대안으로 엔진 ECU의 21 03 블록을 쓴다
-        # (OBDb 메이커 공용 HYUNDAI_ODO_V2):
-        #   byte 49~52  마지막 DPF 재생 시점의 주행거리   /1000 km
-        #   byte 53~56  재생 이후 달린 거리               /1000 km
-        #   byte 57~60  총주행거리                        /1000 km  ← 목표
-        # 셋은 서로 다른 필드다. awesomeit이 "DPF 주행거리"로 부르는 건 byte 53(재생 후 거리).
-        #
-        # 응답이 byte 57까지 도착하지 않으면 decode가 null을 돌려주고 아무것도
-        # 발행되지 않는다 — 미지원 차에서 엉뚱한 값이 올라오지 않는다.
-        #
-        # 보정: 2026-07-30 실측에서 이 ECU 카운터가 계기판(195958 km)보다
-        # 0.7331% 높게(197394.5 km) 나왔다. 처음엔 상수(offset_value)로 보정했으나
-        # 신차(카운터=0)에서 dash=-1436.5km 가 나오는 게 되어 성립할 수 없다.
-        # 배율(scale) 보정은 원점을 지나므로(카운터=0 → dash=0) 물리적으로 맞다 —
-        # 이 카운터는 계기판과 별개 환산계수로 바퀴속도 펄스를 거리로 누적하는
-        # 서비스용 값이라, 오차가 주행거리에 비례해 벌어지는 게 정상이다.
-        # 세 필드가 odometer = at_regen + since_regen 항등식을 만족하려면
-        # 셋 다 같은 배율을 써야 한다 (상수 보정과 달리 since_regen도 예외 없음).
-        #
-        # 측정이 한 점뿐이라 배율만 가정했고 절편은 0으로 뒀다. 100km 이상
-        # 주행 후 재확인해 두 점으로 완전한 affine 식(scale·offset_value 둘 다)을
-        # 풀 것 — 아래 odometer_flow_control 이 계기판 값을 직접 준다면 이 보정
-        # 자체가 필요 없어지므로 그쪽을 먼저 확인한다.
-        # 오도미터는 분 단위로 갱신될 필요가 없고, 63바이트 멀티프레임이라 짧은
-        # PID보다 무겁다 — 주기를 늘리는 게 배터리에 가장 크게 도움되는 지점이다.
         - key: odometer
           mode: "21"
           pid: "03"
@@ -255,8 +205,6 @@ templates:
           accuracy_decimals: 1
           icon: mdi:counter
           update_interval: 300s
-        # 검산용: 재생시점 주행거리 + 재생후 거리 = 총주행거리.
-        # 셋 다 같은 카운터를 공유하므로 같은 배율을 적용해야 항등식이 유지된다.
         - key: odometer_at_last_dpf_regen
           mode: "21"
           pid: "03"
@@ -279,32 +227,6 @@ templates:
           accuracy_decimals: 1
           entity_category: diagnostic
           update_interval: 300s
-
-        # ── 계기판 오도미터 재시도: 확장 진단 세션 ─────────────────────────
-        # 위 odometer 는 어디까지나 대체 경로(추정 보정)다. 진짜 계기판 값을
-        # 직접 받을 가능성이 아직 남아 있다 — 7F 22 22 의 NRC 22(conditionsNotCorrect)는
-        # UDS 표준상 "그 DID는 존재하는데 지금 조건에서 거부"라는 뜻이다.
-        # DID 자체가 없다는 NRC 11(serviceNotSupported)·31(requestOutOfRange)이 아니었다.
-        #
-        # meatpiHQ/wican-fw#478 에서 같은 헤더(7C6)·같은 PID(22B002)로 실제 성공한
-        # 사례 둘을 확인했다: 아이오닉 28kWh(WiCAN, pid_init "ATSH7C6;ATFCSH7C6")와
-        # 아이오닉5(canair, 세션 명령 없이 바로 조회). 둘 다 확장 세션(10 03) 없이
-        # 됐고, 공통점은 흐름제어(ATFCSH) 설정뿐이었다. 그래서 세션 대신 흐름제어를
-        # 먼저 시도한다 — 실제 성공 사례에 더 가깝다.
-        #
-        # 오도미터 위치도 세대별로 다르다: 아이오닉5·OBDb ICE 11개 차종은 byte
-        # 6~8(g,h,i)인데, 구형 아이오닉 28kWh는 byte 9~11(j,k,l)이었다
-        # (WiCAN이 ISO-TP PCI 바이트를 페이로드에 섞어 넣는 별도 버그가 있어,
-        # 그 이슈에서 공개한 보정표로 실제 위치를 역산한 값). 응답은 왔는데
-        # 195958과 안 맞으면 formula 를 "j*65536+k*256+l" 로 바꿔서 재시도할 것.
-        #
-        # pre_commands 자체의 응답(흐름제어 설정 OK/에러)은 로그에 안 남지만
-        # (해당 응답을 기다리는 센서가 없어 기록 경로를 안 탄다), 뒤따르는
-        # 22B002 응답은 그대로 남는다.
-        #   raw=62B002… → 성공. 계기판 값이 보정 없이 직접 나온다
-        #   negative response 그대로 → 흐름제어도 소용없음. 세션(10 03)으로 한 번 더
-        #     시도해볼 수는 있으나, 위 두 성공 사례 모두 세션 없이 됐다는 점에서
-        #     이 차는 DID 자체가 없을 가능성이 이전보다 높아졌다.
         - key: odometer_flow_control
           mode: "22"
           pid: "B002"
@@ -316,30 +238,6 @@ templates:
           accuracy_decimals: 0
           entity_category: diagnostic
           update_interval: 300s
-
-        # 계기판(22B002)·표준(01A6)·변속기(21A0) 오프셋 0~15 스캔은 195958km와
-        # 일치하는 값을 찾지 못해 제거했다. 계기판은 애초에 22B002 자체를
-        # 7F 22 22로 거부하므로 다른 DID를 더 뒤져볼 이유가 약하고, 표준 01A6은
-        # mode 01 지원 목록에 없어 예상대로였다. 위 offset_value 보정을 계속 쓴다.
-
-        # ── 변속기(TCU) 21 A0 @ 7E1 — 응답이 4바이트뿐이다 ────────────────
-        # 실측: 요청 116건, 응답 115건이 전부 61A0FFFF0000.
-        # 에코(61 A0)를 뺀 데이터는 FF FF 00 00 — 4바이트가 전부다.
-        #
-        # 잘린 멀티프레임이 아니라 완결된 응답이다. 응답 지연 중앙값이 92ms 로,
-        # 단일프레임 010C(79ms)·멀티프레임 2101(41바이트, 76ms)과 같은 수준이다.
-        # First Frame 만 오고 CF 가 끊긴 것이라면 ELM327 이 CF 를 기다리다
-        # 내부 타임아웃을 먹어야 하므로 지연이 훨씬 커진다. 그런 흔적이 없다.
-        # 흐름제어(ATFCSH) 문제도 아니다 — 같은 세션에서 7E0 멀티프레임은 정상이다.
-        #
-        # 따라서 awesomeit 프로필의 byte 13(미션오일온도)·20(기어위치)·21(기어단수)은
-        # 이 응답으로는 절대 닿지 않는다. 프로필이 다른 사양 기준이거나,
-        # 이 TCU 가 특정 조건에서만 전체 블록을 준다는 뜻이다.
-        #
-        # 아래는 실제로 오는 4바이트를 그대로 노출하는 프로브다.
-        # 주차(P)·엔진공회전 상태에서만 로그를 떴으므로, 주행 중이나 기어를 바꿀 때
-        # 값이 달라지는지 봐야 한다. 값이 움직이면 그 바이트가 기어 정보이고,
-        # FF FF 00 00 이 계속 고정이면 이 차 TCU 는 이 블록을 안 채우는 것이다.
         - key: tcu_byte0
           mode: "21"
           pid: "A0"
@@ -390,3 +288,117 @@ templates:
         - key: relay
           type: switch
           command: { on: "A10100", off: "A10000" }
+
+  # ── Nová šablona pro Volkswagen ID.4 ─────────────────────────────
+  - id: obd_vw_id4
+    name: "VW ID.4 (VAG MEB)"
+    description: "SoC, napětí, proud, teploty HV baterie a rychlost pro Volkswagen ID.4"
+    device:
+      id: vw_id4_obd
+      name: "VW ID.4 OBD"
+      source: obd
+      obd:
+        service_uuid: "18F0"
+        tx_char_uuid: "2AF1"
+        rx_char_uuid: "2AF0"
+        tx_delay: 50ms
+        init_commands: ["ATSP6"]
+      sensors:
+        - key: "speed"
+          device_class: "speed"
+          unit: "km/h"
+          state_class: "measurement"
+          icon: "mdi:speedometer"
+          accuracy_decimals: 0
+          preset: "speed"
+          pid: "0D"
+          formula: "a"
+          update_interval: "1s"
+
+        - key: "battery_voltage"
+          device_class: "voltage"
+          unit: "V"
+          state_class: "measurement"
+          accuracy_decimals: 2
+          preset: "battery_voltage"
+          pid: "42"
+          formula: "(a*256+b)/1000"
+          update_interval: "10s"
+
+        - key: "battery_soc_real"
+          device_class: "battery"
+          unit: "%"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "028C"
+          pre_commands: ["ATSH7E4"]
+          formula: "a*0.39215686"
+          update_interval: "10s"
+
+        - key: "battery_soc_display"
+          device_class: "battery"
+          unit: "%"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "1002"
+          pre_commands: ["ATSH7E4"]
+          formula: "a*0.5"
+          update_interval: "10s"
+
+        - key: "hv_battery_voltage"
+          device_class: "voltage"
+          unit: "V"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "1E3B"
+          pre_commands: ["ATSH7E4"]
+          formula: "(a*256+b)*0.25"
+          update_interval: "5s"
+
+        - key: "hv_battery_current"
+          device_class: "current"
+          unit: "A"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "1E3D"
+          pre_commands: ["ATSH7E4"]
+          formula: "((a*256+b)-15000)*0.1"
+          update_interval: "2s"
+
+        - key: "battery_temp_min"
+          device_class: "temperature"
+          unit: "°C"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "1E0E"
+          pre_commands: ["ATSH7E4"]
+          formula: "a-40"
+          update_interval: "30s"
+
+        - key: "battery_temp_max"
+          device_class: "temperature"
+          unit: "°C"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          mode: "22"
+          pid: "1E0F"
+          pre_commands: ["ATSH7E4"]
+          formula: "a-40"
+          update_interval: "30s"
+
+        - key: "odometer"
+          device_class: "distance"
+          unit: "km"
+          state_class: "total_increasing"
+          accuracy_decimals: 0
+          icon: "mdi:counter"
+          mode: "22"
+          pid: "2203"
+          pre_commands: ["ATSH17FC007B"]
+          formula: "(a*16777216+b*65536+c*256+d)/10"
+          update_interval: "120s"
