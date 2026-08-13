@@ -6,95 +6,86 @@ defaults:
     min_interval: 10s
 
 devices:
+  - id: "obd_link_cx"
+    name: "OBDlink CX"
+    source: obd
+    obd:
+      tx_delay: 50ms
+      init_commands:
+        - "ATSP6"      # CAN bus 500kbps (11-bit ID)
+    sensors:
+      # ── Rychlost (standardní preset) ──
+      - { key: speed, preset: speed, update_interval: 1s }
 
-- id: "obd_link_cx"
-  name: "OBDlink CX"
-  source: "obd"
-  obd:
-    init_commands:
-      - "ATSP6"      # Nastaví CAN bus 500kbps (11-bit ID)
-      - "ATH1"       # Zapne hlavičky (nutné pro VAG)
-  sensors:
-    # ── Standardní rychlost ──
-    - key: "speed"
-      device_class: "speed"
-      unit: "km/h"
-      state_class: "measurement"
-      icon: "mdi:speedometer"
-      accuracy_decimals: 0
-      pid: "0D"
-      formula: "a"
-      update_interval: "1s"
+      # ── Baterie VW ID.4 (UDS Mode 22 na ECU 7E4) ──
+      - key: battery_soc_real
+        device_class: battery
+        unit: "%"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "028C"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a*0.39215686"
+        update_interval: 10s
 
-    # ── Baterie ID.4 (ECU 7E4 - Battery Management) ──
-    - key: "battery_soc_real"
-      device_class: "battery"
-      unit: "%"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "028C"
-      pre_commands:
-        - "ATSH7E4"  # Přepne adresaci na BMS jednotku
-      formula: "a*0.39215686"
-      update_interval: "10s"
+      - key: battery_soc_display
+        device_class: battery
+        unit: "%"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1002"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a*0.5"
+        update_interval: 10s
 
-    - key: "battery_soc_display"
-      device_class: "battery"
-      unit: "%"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "1002"
-      pre_commands:
-        - "ATSH7E4"
-      formula: "a*0.5"
-      update_interval: "10s"
+      - key: hv_battery_voltage
+        device_class: voltage
+        unit: "V"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E3B"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "(a*256+b)*0.25"
+        update_interval: 5s
 
-    - key: "hv_battery_voltage"
-      device_class: "voltage"
-      unit: "V"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "1E3B"
-      pre_commands:
-        - "ATSH7E4"
-      formula: "(a*256+b)*0.25"
-      update_interval: "5s"
+      - key: hv_battery_current
+        device_class: current
+        unit: "A"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E3D"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "((a*256+b)-15000)*0.1"
+        update_interval: 2s
 
-    - key: "hv_battery_current"
-      device_class: "current"
-      unit: "A"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "1E3D"
-      pre_commands:
-        - "ATSH7E4"
-      formula: "((a*256+b)-15000)*0.1"
-      update_interval: "2s"
+      - key: battery_temp_min
+        device_class: temperature
+        unit: "°C"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E0E"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a-40"
+        update_interval: 30s
 
-    - key: "battery_temp_min"
-      device_class: "temperature"
-      unit: "°C"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "1E0E"
-      pre_commands:
-        - "ATSH7E4"
-      formula: "a-40"
-      update_interval: "30s"
-
-    - key: "battery_temp_max"
-      device_class: "temperature"
-      unit: "°C"
-      state_class: "measurement"
-      accuracy_decimals: 1
-      mode: "22"
-      pid: "1E0F"
-      pre_commands:
-        - "ATSH7E4"
-      formula: "a-40"
-      update_interval: "30s"
+      - key: battery_temp_max
+        device_class: temperature
+        unit: "°C"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E0F"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a-40"
+        update_interval: 30s
