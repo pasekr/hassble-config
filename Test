@@ -116,15 +116,6 @@ devices:
   source: "obd"
   obd: {}
   sensors:
-  - key: "odometer"
-    device_class: "distance"
-    unit: "km"
-    state_class: "total_increasing"
-    accuracy_decimals: 1
-    preset: "odometer"
-    pid: "A6"
-    formula: "(a*16777216+b*65536+c*256+d)/10"
-    update_interval: "30s"
   - key: "speed"
     device_class: "speed"
     unit: "km/h"
@@ -135,3 +126,54 @@ devices:
     pid: "0D"
     formula: "a"
     update_interval: "1s"
+  # ── Reálné SoC Baterie (UDS Mode 22 na jednotku 7E4) ──
+  - key: battery_soc_real
+      mode: "22"
+      pid: "028C"
+      pre_commands:
+        - "ATSH7E4"
+      formula: "a*0.39215686"
+      unit: "%"
+      device_class: battery
+      state_class: measurement
+      accuracy_decimals: 1
+      update_interval: 10s
+  
+    # ── Zobrazované SoC Baterie (Palubka) ──
+    - key: battery_soc_display
+        mode: "22"
+        pid: "1002"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a*0.5"
+        unit: "%"
+        device_class: battery
+        state_class: measurement
+        accuracy_decimals: 1
+        update_interval: 10s
+  
+    # ── Napětí HV Baterie ──
+    - key: hv_battery_voltage
+        mode: "22"
+        pid: "1E3B"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "(a*256+b)*0.25"
+        unit: "V"
+        device_class: voltage
+        state_class: measurement
+        accuracy_decimals: 1
+        update_interval: 5s
+  
+    # ── Proud HV Baterie ──
+    - key: hv_battery_current
+        mode: "22"
+        pid: "1E3D"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "((a*256+b)-15000)*0.1"
+        unit: "A"
+        device_class: current
+        state_class: measurement
+        accuracy_decimals: 1
+        update_interval: 2s
