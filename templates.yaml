@@ -290,17 +290,18 @@ templates:
           command: { on: "A10100", off: "A10000" }
 
   # ── Nová šablona pro Volkswagen ID.4 ─────────────────────────────
+ # ── Šablona pro Volkswagen ID.4 (OBDLink CX) ─────────────────────
   - id: obd_vw_id4
-    name: "VW ID.4 (VAG MEB)"
-    description: "SoC, napětí, proud, teploty HV baterie a rychlost pro Volkswagen ID.4"
+    name: "VW ID.4 (OBDLink CX)"
+    description: "SoC, napětí, proud, teploty HV baterie pro VW ID.4 přes OBDLink CX"
     device:
       id: vw_id4_obd
       name: "VW ID.4 OBD"
       source: obd
       obd:
-        service_uuid: "18F0"
-        tx_char_uuid: "2AF1"
-        rx_char_uuid: "2AF0"
+        service_uuid: "E7810A71-73AE-499D-8C15-FAA9AEF0C3F2"
+        tx_char_uuid: "E7810A72-73AE-499D-8C15-FAA9AEF0C3F2"
+        rx_char_uuid: "E7810A73-73AE-499D-8C15-FAA9AEF0C3F2"
         tx_delay: 50ms
         init_commands: ["ATSP6"]
       sensors:
@@ -398,6 +399,10 @@ templates:
           accuracy_decimals: 0
           icon: "mdi:counter"
           mode: "22"
+          pid: "2203"
+          pre_commands: ["ATSH17FC007B"]
+          formula: "(a*16777216+b*65536+c*256+d)/10"
+          update_interval: "120s"
           pid: "2203"
           pre_commands: ["ATSH17FC007B"]
           formula: "(a*16777216+b*65536+c*256+d)/10"
