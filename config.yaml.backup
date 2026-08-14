@@ -1,0 +1,76 @@
+version: 1
+
+defaults:
+  publish:
+    on_change_only: true
+    min_interval: 10s
+
+devices:
+  - id: "vw_id4_obd"
+    name: "VW ID.4 OBD"
+    source: obd
+    obd:
+      tx_delay: 100ms         # Vyšší prodleva zabrání odpojování Bluetooth
+      init_commands:
+        - "ATSP6"              # Vynutí ISO 15765-4 CAN (11 bit ID, 500 kbaud)
+        - "ATCRA 7E8"          # Přijímat odpovědi z ECU baterie/pohonu
+      sensors:
+        # ── Standardní rychlost (Funguje vám, necháme tak) ──
+        - key: speed
+          preset: speed
+          update_interval: 1s
+          device_class: speed
+          unit: km/h
+          state_class: measurement
+          icon: mdi:speedometer
+          accuracy_decimals: 0
+        # ── HV Baterie (UDS Mode 22 @ ECU 7E4) ──
+        - key: battery_soc_real
+          mode: "22"
+          pid: "028C"
+          pre_commands:
+            - "ATSH7E4"
+          formula: "a*0.39215686"
+          unit: "%"
+          device_class: battery
+          state_class: measurement
+          accuracy_decimals: 1
+          icon: mdi:battery-charging-100
+          update_interval: 15s
+
+        - key: battery_soc_display
+          mode: "22"
+          pid: "1002"
+          pre_commands:
+            - "ATSH7E4"
+          formula: "a*0.5"
+          unit: "%"
+          device_class: battery
+          state_class: measurement
+          accuracy_decimals: 1
+          icon: mdi:gauge
+          update_interval: 15s
+
+        - key: hv_battery_voltage
+          mode: "22"
+          pid: "1E3B"
+          pre_commands:
+            - "ATSH7E4"
+          formula: "(a*256+b)*0.25"
+          unit: "V"
+          device_class: voltage
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 10s
+
+        - key: hv_battery_current
+          mode: "22"
+          pid: "1E3D"
+          pre_commands:
+            - "ATSH7E4"
+          formula: "((a*256+b)-15000)*0.1"
+          unit: "A"
+          device_class: current
+          state_class: measurement
+          accuracy_decimals: 1
+          update_interval: 5s
