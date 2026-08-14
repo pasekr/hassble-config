@@ -1,10 +1,5 @@
 version: 1
 
-defaults:
-  publish:
-    on_change_only: true
-    min_interval: 10s
-
 devices:
   - id: "obd_link_cx"
     name: "OBDlink CX"
@@ -17,16 +12,16 @@ devices:
         - "ATL0"
         - "ATS0"
         - "ATH0"
-        - "ATSP6"      # ISO 15765-4 CAN (11-bit ID, 500 kbaud)
-        - "ATCRA 7E8"  # KRITICKÉ: Povolí příjezd odpovědí z jednotky baterie
-        - "ATSH7E4"    # Nastaví výchozí cílovou adresu BMS
+        - "ATSP6"
+        - "ATCRA 7E8"
+        - "ATSH7E4"
     sensors:
-    - key: battery_soc_real
-      mode: "22"
-      pid: "028C"
-      formula: "a*0.39215686"
-      unit: "%"
-      device_class: battery
-      state_class: measurement
-      accuracy_decimals: 1
-      update_interval: 10s
+      - key: battery_soc_real
+        mode: "22"
+        pid: "028C"
+        formula: "a*0.39215686"
+        unit: "%"
+        device_class: battery
+        state_class: measurement
+        accuracy_decimals: 1
+        update_interval: 10s
