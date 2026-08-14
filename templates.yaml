@@ -8,67 +8,67 @@ templates:
       source: obd
       obd: {}
       sensors:
-         # Standardní OBD
-         - key: "speed"
-           preset: "speed"
-           pid: "0D"
-           formula: "a"
-           device_class: "speed"
-           unit: "km/h"
-           state_class: "measurement"
-           accuracy_decimals: 0
-           update_interval: "1s"
+        # Standardní OBD
+        - key: "speed"
+          preset: "speed"
+          pid: "0D"
+          formula: "a"
+          device_class: "speed"
+          unit: "km/h"
+          state_class: "measurement"
+          accuracy_decimals: 0
+          update_interval: "1s"
 
-         - key: "battery_voltage"
-           preset: "battery_voltage"
-           pid: "42"
-           formula: "(a*256+b)/1000"
-           device_class: "voltage"
-           unit: "V"
-           state_class: "measurement"
-           accuracy_decimals: 2
+        - key: "battery_voltage"
+          preset: "battery_voltage"
+          pid: "42"
+          formula: "(a*256+b)/1000"
+          device_class: "voltage"
+          unit: "V"
+          state_class: "measurement"
+          accuracy_decimals: 2
 
-         # VW ID.4 BMS (UDS Mode 22)
-         - key: "hv_soc"
-           mode: "22"
-           header: "7E4"
-           pid: "028C"
-           formula: "a*0.39215686"
-           device_class: "battery"
-           unit: "%"
-           state_class: "measurement"
-           accuracy_decimals: 1
-           update_interval: "10s"
+        # VW ID.4 BMS (UDS Mode 22)
+        - key: "hv_soc"
+          mode: "22"
+          header: "7E4"
+          pid: "028C"
+          formula: "a*0.39215686"
+          device_class: "battery"
+          unit: "%"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          update_interval: "10s"
 
-         - key: "hv_voltage"
-           mode: "22"
-           header: "7E4"
-           pid: "1E3B"
-           formula: "(a*256+b)*0.25"
-           device_class: "voltage"
-           unit: "V"
-           state_class: "measurement"
-           accuracy_decimals: 1
-           update_interval: "5s"
+        - key: "hv_voltage"
+          mode: "22"
+          header: "7E4"
+          pid: "1E3B"
+          formula: "(a*256+b)*0.25"
+          device_class: "voltage"
+          unit: "V"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          update_interval: "5s"
 
-         - key: "hv_current"
-           mode: "22"
-           header: "7E4"
-           pid: "1E3D"
-           formula: "((a*256+b)-15000)*0.1"
-           device_class: "current"
-           unit: "A"
-           state_class: "measurement"
-           accuracy_decimals: 1
-           update_interval: "2s"
+        - key: "hv_current"
+          mode: "22"
+          header: "7E4"
+          pid: "1E3D"
+          formula: "((a*256+b)-15000)*0.1"
+          device_class: "current"
+          unit: "A"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          update_interval: "2s"
 
-         - key: "battery_temp_max"
-           mode: "22"
-           header: "7E4"
-           pid: "1E0F"
-           formula: "a-40"
-           device_class: "temperature"
-           unit: "°C"
-           state_class: "measurement"
-           accuracy_decimals: 1
-           update_interval: "30s"
+        - key: "battery_temp_max"
+          mode: "22"
+          header: "7E4"
+          pid: "1E0F"
+          formula: "a-40"
+          device_class: "temperature"
+          unit: "°C"
+          state_class: "measurement"
+          accuracy_decimals: 1
+          update_interval: "30s"
