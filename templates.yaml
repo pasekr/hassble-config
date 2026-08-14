@@ -1,6 +1,6 @@
 templates:
   - id: obd_link_cx
-    name: "OBDlink CX (VW ID.4)"
+    name: "OBDlink CX (VW ID.4 GTX)"
     description: "SoC a data baterie pro MEB platformu přes ECU 7E4"
     device:
       id: obd_vehicle
