@@ -76,7 +76,7 @@ templates:
         - key: battery_temp_min
           device_class: temperature
           unit: "°C"
-          state_class: "easurement
+          state_class: measurement
           accuracy_decimals: 1
           mode: "22"
           pid: "1E0E"
