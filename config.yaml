@@ -17,4 +17,4 @@ devices:
         - "ATCRA 7E8"
         - "ATSH7E4"
         - "1003"        # <--- KLÍČOVÉ: Otevře UDS Extended Diagnostic Session pro BMS
-        - "3E00"
+        - "3E00"        # <--- Tester Present (udrží relaci otevřenou)
