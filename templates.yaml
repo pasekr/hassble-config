@@ -17,6 +17,7 @@ templates:
           state_class: measurement
           accuracy_decimals: 0
           update_interval: 1s
+          
         - key: battery_voltage
           pid: "42"
           formula: "(a*256+b)/1000"
