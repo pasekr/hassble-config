@@ -6,26 +6,27 @@ defaults:
     min_interval: 10s
 
 devices:
-  - id: "vw_id4_obd"
-    name: "VW ID.4 OBD"
+  - id: "obd_link_cx"
+    name: "OBDlink CX"
     source: obd
     obd:
-      tx_delay: 100ms         # Vyšší prodleva zabrání odpojování Bluetooth
+      tx_delay: 100ms
       init_commands:
-        - "ATSP6"              # Vynutí ISO 15765-4 CAN (11 bit ID, 500 kbaud)
-        - "ATCRA 7E8"          # Přijímat odpovědi z ECU baterie/pohonu
+        - "ATZ"
+        - "ATE0"
+        - "ATL0"
+        - "ATS0"
+        - "ATH0"
+        - "ATSP6"      # ISO 15765-4 CAN (11-bit ID, 500 kbaud)
+        - "ATCRA 7E8"  # KRITICKÉ: Povolí příjezd odpovědí z jednotky baterie
+        - "ATSH7E4"    # Nastaví výchozí cílovou adresu BMS
       sensors:
-        # ── HV Baterie (UDS Mode 22 @ ECU 7E4) ──
         - key: battery_soc_real
           mode: "22"
           pid: "028C"
-          pre_commands:
-            - "ATSH7E4"
           formula: "a*0.39215686"
           unit: "%"
           device_class: battery
           state_class: measurement
           accuracy_decimals: 1
-          icon: mdi:battery-charging-100
-          update_interval: 15s
-
+          update_interval: 10s
