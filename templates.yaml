@@ -6,7 +6,8 @@ templates:
       id: obd_vehicle
       name: "OBDlink CX"
       source: obd
-      obd: {}
+      obd:
+        tx_delay: 100ms
       sensors:
         # Standardní OBD
         - key: speed
