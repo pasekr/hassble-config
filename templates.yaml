@@ -16,7 +16,7 @@ templates:
           unit: "km/h"
           state_class: measurement
           accuracy_decimals: 0
-          update_interval: "1s
+          update_interval: 1s
 
         - key: battery_voltage
           pid: "42"
@@ -58,7 +58,7 @@ templates:
           unit: "A"
           state_class: measurement
           accuracy_decimals: 1
-          update_interval: 2s"
+          update_interval: 2s
 
         - key: battery_temp_max
           mode: "22"
