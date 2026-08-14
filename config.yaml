@@ -29,8 +29,3 @@ devices:
           icon: mdi:battery-charging-100
           update_interval: 15s
 
-
-          device_class: current
-          state_class: measurement
-          accuracy_decimals: 1
-          update_interval: 5s
