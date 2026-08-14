@@ -1,5 +1,94 @@
 devices:
-  - id: "obd_link_cx"
+  - id: obd_link_cx
     name: "OBDlink CX"
-    source: "obd"
+    source: obd
     obd: {}
+    sensors:
+      # Rychlost – ověřený standardní OBD PID
+      - key: speed
+        device_class: speed
+        unit: "km/h"
+        state_class: measurement
+        icon: "mdi:speedometer"
+        accuracy_decimals: 0
+        pid: "0D"
+        formula: "a"
+        update_interval: 1s
+
+      # ID.4 – skutečný SoC baterie
+      - key: battery_soc_real
+        device_class: battery
+        unit: "%"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "028C"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a*0.39215686"
+        update_interval: 10s
+
+      # ID.4 – SoC zobrazovaný vozem
+      - key: battery_soc_display
+        device_class: battery
+        unit: "%"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1002"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a*0.5"
+        update_interval: 10s
+
+      # ID.4 – napětí HV baterie
+      - key: hv_battery_voltage
+        device_class: voltage
+        unit: "V"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E3B"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "(a*256+b)*0.25"
+        update_interval: 5s
+
+      # ID.4 – proud HV baterie
+      - key: hv_battery_current
+        device_class: current
+        unit: "A"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E3D"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "((a*256+b)-15000)*0.1"
+        update_interval: 2s
+
+      # ID.4 – minimální teplota baterie
+      - key: battery_temp_min
+        device_class: temperature
+        unit: "°C"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E0E"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a-40"
+        update_interval: 30s
+
+      # ID.4 – maximální teplota baterie
+      - key: battery_temp_max
+        device_class: temperature
+        unit: "°C"
+        state_class: measurement
+        accuracy_decimals: 1
+        mode: "22"
+        pid: "1E0F"
+        pre_commands:
+          - "ATSH7E4"
+        formula: "a-40"
+        update_interval: 30s
