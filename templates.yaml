@@ -1,6 +1,3 @@
-# Device templates for HassBle app -> Sensors tab -> Import template
-# Loaded from repo root as templates.yaml (same branch as config.yaml)
-
 templates:
   devices:
     - id: "obd_link_cx"
