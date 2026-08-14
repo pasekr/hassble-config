@@ -13,5 +13,8 @@ devices:
         - "ATS0"
         - "ATH0"
         - "ATSP6"
+        - "ATST64"      # <--- DŮLEŽITÉ: Prodlouží timeout čekání na odpověď ECU (předchází NO DATA)
         - "ATCRA 7E8"
         - "ATSH7E4"
+        - "1003"        # <--- KLÍČOVÉ: Otevře UDS Extended Diagnostic Session pro BMS
+        - "3E00"
