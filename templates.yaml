@@ -2,28 +2,28 @@
 # Loaded from repo root as templates.yaml (same branch as config.yaml)
 
 templates:
-    devices:
-      - id: "obd_link_cx"
-        name: "OBDlink CX"
-        source: obd
-        obd:
-          tx_delay: 100ms
-          init_commands:
-            - "ATZ"
-            - "ATE0"
-            - "ATL0"
-            - "ATS0"
-            - "ATH0"
-            - "ATSP6"      # ISO 15765-4 CAN (11-bit ID, 500 kbaud)
-            - "ATCRA 7E8"  # KRITICKÉ: Povolí příjezd odpovědí z jednotky baterie
-            - "ATSH7E4"    # Nastaví výchozí cílovou adresu BMS
-          sensors:
-            - key: battery_soc_real
-              mode: "22"
-              pid: "028C"
-              formula: "a*0.39215686"
-              unit: "%"
-              device_class: battery
-              state_class: measurement
-              accuracy_decimals: 1
-              update_interval: 10s
+  devices:
+    - id: "obd_link_cx"
+      name: "OBDlink CX"
+      source: obd
+      obd:
+        tx_delay: 100ms
+        init_commands:
+          - "ATZ"
+          - "ATE0"
+          - "ATL0"
+          - "ATS0"
+          - "ATH0"
+          - "ATSP6"      # ISO 15765-4 CAN (11-bit ID, 500 kbaud)
+          - "ATCRA 7E8"  # KRITICKÉ: Povolí příjezd odpovědí z jednotky baterie
+          - "ATSH7E4"    # Nastaví výchozí cílovou adresu BMS
+        sensors:
+          - key: battery_soc_real
+            mode: "22"
+            pid: "028C"
+            formula: "a*0.39215686"
+            unit: "%"
+            device_class: battery
+            state_class: measurement
+            accuracy_decimals: 1
+            update_interval: 10s
