@@ -34,23 +34,20 @@ devices:
       # BECM / EnergyCtrl - State of Charge
       # Car Scanner request: 22028C
       # Working response example: 17FE007B0462028Cxx
-      - key: "battery_soc_real"
+      - key: battery_soc_raw
         mode: "22"
         pid: "028C"
-        formula: "1.12*a/2.5-7.16"
-        unit: "%"
-        device_class: battery
-        state_class: measurement
-        accuracy_decimals: 1
-        icon: "mdi:battery-charging-100"
-        update_interval: 10s
         pre_commands:
           - "ATSHFC007B"
           - "ATCP17"
           - "ATCRA17FE007B"
           - "ATFCSH17FC007B"
           - "STCFCPA17FC007B,17FE007B"
-          - "ATFCSM1"
+        formula: "a"
+        unit: "raw"
+        state_class: measurement
+        accuracy_decimals: 0
+        update_interval: 10s
 
       # HV battery voltage
       # Car Scanner request: 221E3B
