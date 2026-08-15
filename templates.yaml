@@ -6,33 +6,41 @@ templates:
       id: obd_vehicle
       name: "OBDlink CX"
       source: obd
-      obd: {}
+      obd:
+      tx_delay: 50ms
+      init_commands:
+        - "ATSP7"
+        - "ATSHFC007B"
+        - "ATCP17"
+        - "ATCRA17FE007B"
+        - "ATFCSH17FC007B"
+        - "STCFCPA17FC007B,17FE007B"
+        
       sensors:
 
-        # Rychlost – ověřený standardní OBD PID
-        - key: speed
-          device_class: speed
-          unit: "km/h"
-          state_class: measurement
-          icon: "mdi:speedometer"
-          accuracy_decimals: 0
-          pid: "0D"
-          formula: "a"
-          update_interval: 1s
-
         # ID.4 – skutečný SoC baterie
-        - key: battery_soc_real
-          device_class: battery
-          unit: "%"
-          state_class: measurement
-          accuracy_decimals: 1
-          mode: "22"
-          pid: "028C"
-          pre_commands:
-            - "ATSH7E4"
-          formula: "a*0.39215686"
-          update_interval: 10s
-
+        - key: "battery_soc"
+        mode: "22"
+        pid: "028C"
+        decode:
+          offset: 0
+          length: 1
+          type: uint8
+          scale: 0.448
+          offset_value: -7.16
+        unit: "%"
+        device_class: battery
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:battery-high"
+        update_interval: 10s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          
         # ID.4 – SoC zobrazovaný vozem
         - key: battery_soc_display
           device_class: battery
@@ -41,9 +49,19 @@ templates:
           accuracy_decimals: 1
           mode: "22"
           pid: "1002"
+          decode:
+            offset: 0
+            length: 1
+            type: uint8
+            scale: 0.448
+            offset_value: -7.16
           pre_commands:
-            - "ATSH7E4"
-          formula: "a*0.5"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+
           update_interval: 10s
 
         # ID.4 – napětí HV baterie
@@ -55,8 +73,12 @@ templates:
           mode: "22"
           pid: "1E3B"
           pre_commands:
-            - "ATSH7E4"
-          formula: "(a*256+b)*0.25"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+
           update_interval: 5s
 
         # ID.4 – proud HV baterie
@@ -68,8 +90,12 @@ templates:
           mode: "22"
           pid: "1E3D"
           pre_commands:
-            - "ATSH7E4"
-          formula: "((a*256+b)-15000)*0.1"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+
           update_interval: 2s
 
         # ID.4 – minimální teplota baterie
@@ -81,8 +107,12 @@ templates:
           mode: "22"
           pid: "1E0E"
           pre_commands:
-            - "ATSH7E4"
-          formula: "a-40"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+
           update_interval: 30s
 
         # ID.4 – maximální teplota baterie
@@ -94,6 +124,10 @@ templates:
           mode: "22"
           pid: "1E0F"
           pre_commands:
-            - "ATSH7E4"
-          formula: "a-40"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+
           update_interval: 30s
