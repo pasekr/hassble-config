@@ -14,7 +14,6 @@ devices:
         - "ATCRA17FE007B"
         - "ATFCSH17FC007B"
         - "STCFCPA17FC007B,17FE007B"
-        - "ATFCSM1"
 
     sensors:
       - key: "battery_soc"
@@ -38,4 +37,3 @@ devices:
           - "ATCRA17FE007B"
           - "ATFCSH17FC007B"
           - "STCFCPA17FC007B,17FE007B"
-          - "ATFCSM1"
