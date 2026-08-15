@@ -8,7 +8,7 @@ devices:
         - "ATSP6"
         - "ATSTFF"
     sensors:
-      - key: "battery_soc_real"
+      - key: battery_soc_real
         device_class: battery
         unit: "%"
         state_class: measurement
