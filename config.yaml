@@ -21,6 +21,7 @@ devices:
         pid: "028C"
         formula: "a"
         unit: ""
+        device_class: battery
         state_class: measurement
         accuracy_decimals: 0
         icon: "mdi:battery-high"
