@@ -1,21 +1,173 @@
+version: 1
+
+defaults:
+  publish:
+    on_change_only: true
+    min_interval: 10s
+
 devices:
-  - id: obd_vehicle
-    name: OBDlink CX
+  - id: "id4_obdlink_cx"
+    name: "VW ID.4 OBDLink CX"
     source: obd
+
     obd:
+      tx_delay: 50ms
+
+      # VW ID.4 / MEB:
+      # ISO 15765-4 CAN, 29-bit ID, 500 kbaud
+      # Communication sequence taken from the working Car Scanner log.
       init_commands:
+        - "ATZ"
+        - "ATE0"
+        - "ATL0"
+        - "ATS0"
         - "ATSP7"
+        - "ATSHFC007B"
+        - "ATCP17"
+        - "ATCRA17FE007B"
+        - "ATFCSH17FC007B"
+        - "STCFCPA17FC007B,17FE007B"
+        - "ATFCSM1"
 
     sensors:
-      - key: battery_soc_real
-        device_class: battery
-        unit: "%"
-        state_class: measurement
-        accuracy_decimals: 1
+
+      # BECM / EnergyCtrl - State of Charge
+      # Car Scanner request: 22028C
+      # Working response example: 17FE007B0462028Cxx
+      - key: "battery_soc_real"
         mode: "22"
         pid: "028C"
+        formula: "1.12*a/2.5-7.16"
+        unit: "%"
+        device_class: battery
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:battery-charging-100"
+        update_interval: 10s
         pre_commands:
-          - "ATSH18DA05F1"
-          - "ATCRA18DAF105"
-        formula: "a*0.39215686"
-        update_interval: "10s"
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # HV battery voltage
+      # Car Scanner request: 221E3B
+      # Equation from the supplied MEB configuration.
+      - key: "hv_battery_voltage"
+        mode: "22"
+        pid: "1E3B"
+        formula: "(a*256+b)/4"
+        unit: "V"
+        device_class: voltage
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:car-battery"
+        update_interval: 5s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # HV battery current
+      # Car Scanner equation:
+      # ((A<<32+B<<16+C<<8+D-150000)/100)*-1
+      # Written here using ordinary arithmetic.
+      - key: "hv_battery_current"
+        mode: "22"
+        pid: "1E3D"
+        formula: "((a*16777216+b*65536+c*256+d-150000)/100)*-1"
+        unit: "A"
+        device_class: current
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:current-dc"
+        update_interval: 2s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # Minimum HV battery temperature
+      # Request and positive response are present in the supplied Car Scanner log.
+      # Formula is kept from the previously supplied ID.4 template.
+      - key: "battery_temp_min"
+        mode: "22"
+        pid: "1E0E"
+        formula: "a-40"
+        unit: "Â°C"
+        device_class: temperature
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:thermometer-low"
+        update_interval: 30s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # Maximum HV battery temperature
+      - key: "battery_temp_max"
+        mode: "22"
+        pid: "1E0F"
+        formula: "a-40"
+        unit: "Â°C"
+        device_class: temperature
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:thermometer-high"
+        update_interval: 30s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # Additional BECM temperature point seen in the working log.
+      - key: "battery_temp_point_5"
+        mode: "22"
+        pid: "1E1B"
+        formula: "a/2-40"
+        unit: "Â°C"
+        device_class: temperature
+        state_class: measurement
+        accuracy_decimals: 1
+        icon: "mdi:thermometer"
+        update_interval: 30s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
+
+      # BECM diagnostic value used by the working Car Scanner profile.
+      - key: "battery_voltage_did_2203"
+        mode: "22"
+        pid: "2203"
+        formula: "a"
+        unit: "raw"
+        state_class: measurement
+        accuracy_decimals: 0
+        entity_category: diagnostic
+        update_interval: 60s
+        pre_commands:
+          - "ATSHFC007B"
+          - "ATCP17"
+          - "ATCRA17FE007B"
+          - "ATFCSH17FC007B"
+          - "STCFCPA17FC007B,17FE007B"
+          - "ATFCSM1"
