@@ -2,7 +2,9 @@ devices:
   - id: obd_vehicle
     name: OBDlink CX
     source: obd
-    obd: {}
+    obd:
+      init_commands:
+        - "ATSP7"
 
     sensors:
       - key: battery_soc_real
@@ -12,7 +14,8 @@ devices:
         accuracy_decimals: 1
         mode: "22"
         pid: "028C"
+        pre_commands:
+          - "ATSH18DA05F1"
+          - "ATCRA18DAF105"
         formula: "a*0.39215686"
         update_interval: "10s"
-        pre_commands:
-          - "ATSH7E4"
