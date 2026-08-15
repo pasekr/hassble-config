@@ -19,22 +19,22 @@ templates:
       sensors:
 
         # ID.4 – skutečný SoC baterie
-        - key: "battery_soc"
-        mode: "22"
-        pid: "028C"
-        formula: "a"
-        unit: ""
-        device_class: battery
-        state_class: measurement
-        accuracy_decimals: 0
-        icon: "mdi:battery-high"
-        update_interval: 10s
-        pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
+        - key: battery_soc
+          device_class: battery
+          state_class: measurement
+          accuracy_decimals: 0
+          mode: "22"
+          pid: "028C"
+          formula: "a"
+          unit: ""
+          icon: "mdi:battery-high"
+          update_interval: 10s
+          pre_commands:
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
           
         # ID.4 – SoC zobrazovaný vozem
         - key: battery_soc_display
