@@ -22,16 +22,11 @@ templates:
         - key: "battery_soc"
         mode: "22"
         pid: "028C"
-        decode:
-          offset: 0
-          length: 1
-          type: uint8
-          scale: 0.448
-          offset_value: -7.16
-        unit: "%"
+        formula: "a"
+        unit: ""
         device_class: battery
         state_class: measurement
-        accuracy_decimals: 1
+        accuracy_decimals: 0
         icon: "mdi:battery-high"
         update_interval: 10s
         pre_commands:
@@ -44,90 +39,84 @@ templates:
         # ID.4 – SoC zobrazovaný vozem
         - key: battery_soc_display
           device_class: battery
-          unit: "%"
           state_class: measurement
-          accuracy_decimals: 1
+          accuracy_decimals: 0
           mode: "22"
           pid: "1002"
-          decode:
-            offset: 0
-            length: 1
-            type: uint8
-            scale: 0.448
-            offset_value: -7.16
-          pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
-
+          formula: "a"
+          unit: ""
           update_interval: 10s
+          pre_commands:
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
 
         # ID.4 – napětí HV baterie
         - key: hv_battery_voltage
           device_class: voltage
-          unit: "V"
           state_class: measurement
-          accuracy_decimals: 1
+          accuracy_decimals: 0
           mode: "22"
           pid: "1E3B"
-          pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
-
+          formula: "a"
+          unit: ""
           update_interval: 5s
+          pre_commands:
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
 
         # ID.4 – proud HV baterie
         - key: hv_battery_current
           device_class: current
-          unit: "A"
           state_class: measurement
-          accuracy_decimals: 1
+          accuracy_decimals: 0
           mode: "22"
           pid: "1E3D"
-          pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
-
+          formula: "a"
+          unit: ""
           update_interval: 2s
+          pre_commands:
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
 
         # ID.4 – minimální teplota baterie
         - key: battery_temp_min
           device_class: temperature
-          unit: "°C"
           state_class: measurement
-          accuracy_decimals: 1
+          accuracy_decimals: 0
           mode: "22"
           pid: "1E0E"
+          formula: "a"
+          unit: ""
+          update_interval: 60s
           pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
-
-          update_interval: 30s
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
 
         # ID.4 – maximální teplota baterie
         - key: battery_temp_max
           device_class: temperature
-          unit: "°C"
           state_class: measurement
-          accuracy_decimals: 1
+          accuracy_decimals: 0
           mode: "22"
           pid: "1E0F"
+          formula: "a"
+          unit: ""
+          update_interval: 60s
           pre_commands:
-          - "ATSHFC007B"
-          - "ATCP17"
-          - "ATCRA17FE007B"
-          - "ATFCSH17FC007B"
-          - "STCFCPA17FC007B,17FE007B"
-
-          update_interval: 30s
+            - "ATSHFC007B"
+            - "ATCP17"
+            - "ATCRA17FE007B"
+            - "ATFCSH17FC007B"
+            - "STCFCPA17FC007B,17FE007B"
