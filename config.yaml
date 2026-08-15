@@ -27,7 +27,7 @@ devices:
         # decode is used instead of formula to avoid the locale
         # decimal-comma NumberFormatException seen in HassBle.
         decode:
-          offset: 3
+          offset: 0
           length: 1
           type: uint8
           scale: 0.448
