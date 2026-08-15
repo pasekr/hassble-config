@@ -1,8 +1,8 @@
 version: 1
 
 devices:
-  - id: "id4_obdlink_cx"
-    name: "VW ID.4 OBDLink CX"
+  - id: "obd_link_cx"
+    name: "OBDlink CX"
     source: "obd"
 
     obd:
@@ -20,26 +20,18 @@ devices:
       - key: "battery_soc"
         mode: "22"
         pid: "028C"
-
-        # Response: 62 02 8C BC
-        # Offset 3 selects BC = 188.
-        # 188 * 0.448 - 7.16 = 77.104 %
-        # decode is used instead of formula to avoid the locale
-        # decimal-comma NumberFormatException seen in HassBle.
         decode:
           offset: 0
           length: 1
           type: uint8
           scale: 0.448
           offset_value: -7.16
-
         unit: "%"
         device_class: battery
         state_class: measurement
         accuracy_decimals: 1
         icon: "mdi:battery-high"
         update_interval: 10s
-
         pre_commands:
           - "ATSHFC007B"
           - "ATCP17"
